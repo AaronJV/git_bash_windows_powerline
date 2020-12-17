@@ -8,8 +8,8 @@
 
 
 PROMPT_CHAR=${POWERLINE_PROMPT_CHAR:=""}
-[ -z ${POWERLINE_SPACER+x} ] && POWERLINE_SPACER=" "
-POWERLINE_LEFT_SEPARATOR="$POWERLINE_SPACER"
+[ -z ${POWERLINE_RIGHT_PAD+x} ] && POWERLINE_RIGHT_PAD=" "
+POWERLINE_LEFT_SEPARATOR="$POWERLINE_LEFT_PAD"
 POWERLINE_PROMPT=${POWERLINE_PROMPT:="last_status user_info cwd scm"}
 
 USER_INFO_SSH_CHAR=" "
@@ -31,7 +31,7 @@ SCM_PROMPT_COLOR=${SCM_PROMPT_CLEAN_COLOR}
 CWD_PROMPT_COLOR="B C"
 
 STATUS_PROMPT_COLOR="Bl R B"
-STATUS_PROMPT_ERROR="✘"
+STATUS_PROMPT_ERROR=" ✘"
 STATUS_PROMPT_ERROR_COLOR="Bl R B"
 STATUS_PROMPT_ROOT="⚡"
 STATUS_PROMPT_ROOT_COLOR="Bl Y B"
@@ -187,7 +187,7 @@ function __powerline_left_segment {
   fi
 
   styles=( ${params[1]} )
-  LEFT_PROMPT+="${separator}$(__color ${styles[@]})${params[0]}"
+  LEFT_PROMPT+="${separator}$(__color ${styles[@]})${params[0]}$POWERLINE_RIGHT_PAD"
 
   #Save last background for next segment
   LAST_SEGMENT_COLOR=${styles[0]}
@@ -200,7 +200,9 @@ function __powerline_last_status_prompt {
   [[ $UID -eq 0 ]] && symbols+="$(__color ${STATUS_PROMPT_ROOT_COLOR})${STATUS_PROMPT_ROOT}"
   [[ $(jobs -l | wc -l) -gt 0 ]] && symbols+="$(__color ${STATUS_PROMPT_JOBS_COLOR})${STATUS_PROMPT_JOBS}"
 
+  [[ ! -n "$symbols" ]] && [[ ! -z "$STATUS_PROMPT_SUCCESS" ]]  && symbols+="$STATUS_PROMPT_SUCCESS"
   [[ -n "$symbols" ]] && echo "$symbols|${STATUS_PROMPT_COLOR}"
+
 }
 
 function __powerline_prompt_command {
