@@ -91,6 +91,34 @@ function __powerline_cwd_prompt {
   echo "\w|${CWD_PROMPT_COLOR}"
 }
 
+function __powerline_short_cwd_prompt() {
+  base="${PWD#${HOME}}"
+  if [ "${PWD}" != "${base}" ]; then
+    base="~$base"
+  fi
+
+  parts=
+  last_short=""
+  IFS="/"
+  for q in ${base}; do
+    last_short=""
+    if [[ ${#q} -gt 3 ]]; then
+      short_cwd+="${q:0:2}./"
+    else
+      last_short=true
+      short_cwd+="$q/"
+    fi
+  done
+  short_cwd=${short_cwd%/}
+  if [ -z $last_short ]; then
+    short_cwd=${short_cwd%.}
+    short_cwd+="${q:2}"
+  fi
+  IFS=' '
+  echo "$short_cwd|${CWD_PROMPT_COLOR}"
+}
+
+
 function __powerline_scm_prompt {
   git_local_branch=""
   git_branch=""
@@ -212,9 +240,16 @@ function __powerline_prompt_command {
   LEFT_PROMPT=""
   SEGMENTS_AT_LEFT=0
   LAST_SEGMENT_COLOR=""
+  WIDTH=$(tput cols)
 
   ## left prompt ##
   for segment in $POWERLINE_PROMPT; do
+    if [[ $segment == \>* ]]; then
+      segment="${segment:1}"
+      if [[ $WIDTH -lt 100 ]]; then
+        continue
+      fi
+    fi
     local info="$(__powerline_${segment}_prompt)"
     [[ -n "${info}" ]] && __powerline_left_segment "${info}"
   done
