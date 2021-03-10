@@ -12,7 +12,7 @@ I recommend the following:
 ```bash
 cd $HOME
 mkdir -p .bash/git_bash_windows_powerline
-git clone https://github.com/diesire/git_bash_windows_powerline.git .bash/git_bash_windows_powerline
+git clone https://github.com/AaronJV/git_bash_windows_powerline.git .bash/git_bash_windows_powerline
 ```
 
 then add the following to your .bashrc:
